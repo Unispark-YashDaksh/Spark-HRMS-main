@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider, Navigate, useRouteError } from 'react-router-dom'
 import LoadingSpinner from './components/LoadingSpinner'
+import RequireAuth from './components/RequireAuth'
 
 function ErrorBoundary() {
   const error = useRouteError();
@@ -37,6 +38,7 @@ import AttendanceReport from './components/AttendanceReport'
 import AdminProfile from './components/AdminProfile'
 import Login from './components/Login'
 
+
 const router = createBrowserRouter([
   {
     path: 'login',
@@ -44,14 +46,14 @@ const router = createBrowserRouter([
     errorElement: <ErrorBoundary />,
   },
   {
-    element: <Layout />,
+    element: <RequireAuth><Layout /></RequireAuth>,
     errorElement: <ErrorBoundary />,
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
       { path: 'dashboard', element: <Dashboard /> },
       { path: 'LeaveManag', element: <LeaveManagement /> },
       { path: 'holidays', element: <HolidaysManagement /> },
-      { path: 'masterMmangement', element: <MasterManagement /> },
+      { path: 'masterManagement', element: <MasterManagement /> },
       { path: 'Employees', element: <Employees /> },
       { path: 'dailyAttendance', element: <DailyAttendance /> },
       { path: 'reports', element: <AttendanceReport /> },
