@@ -1,0 +1,14 @@
+Subject: Proposal to Refactor Backend Structure Before Payroll, Onboarding & Offboarding Modules
+
+Hi [Senior Name],
+
+I wanted to raise this for review before starting the Payroll, Onboarding & Offboarding modules.
+
+Currently, our Backend/Server.js is ~2289 lines with all APIs written inline. This makes debugging, scaling, and adding new modules difficult. I have already tested moving one API (POST /addDepartmentName) to routes/controllers and it works fine.
+
+I have attached a detailed proposal document (Backend_Refactoring_Proposal.md) explaining the issue, industry-standard approach, module-wise plan, and benefits with proof.
+
+Request your approval to do this refactoring incrementally (one API/module at a time) in parallel-safe way so existing functionality remains unaffected.
+
+Thanks,
+[Your Name]

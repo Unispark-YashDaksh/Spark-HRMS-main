@@ -6,6 +6,12 @@ const multer = require("multer");
 const path = require("path");
 const { error } = require("console");
 const redisClient= require("./config/redis");
+const pool = require("./config/db");
+
+const departmentRoutes= require("./routes/department.routes");
+const designationRoutes= require("./routes/designation.routes");
+const branchRoutes= require("./routes/branch.routes");
+const shiftRoutes= require("./routes/shift.routes")
 
 const {storage}= require("./cloudConfig");
 const upload= multer({storage});
@@ -24,22 +30,27 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/", departmentRoutes);
+app.use("/", designationRoutes);
+app.use("/", branchRoutes);
+app.use("/", shiftRoutes);
+
 // Serve uploaded selfies as static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // why used this because
 //Multiple Connections, Faste, Production Standard, Handles Many Requests
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT) || 3306,
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD,
-  database: process.env.DATABASE || process.env.DB_NAME || "attendease_database",
-  ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : undefined,
-  waitForConnections: true,
-  connectionLimit: 150,
-  queueLimit: 0,
-});
+// const pool = mysql.createPool({
+//   host: process.env.DB_HOST || 'localhost',
+//   port: Number(process.env.DB_PORT) || 3306,
+//   user: process.env.DB_USER || "root",
+//   password: process.env.DB_PASSWORD || "Unispark@2022",
+//   database: process.env.DATABASE || process.env.DB_NAME || "attendease_database",
+//   ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : undefined,
+//   waitForConnections: true,
+//   connectionLimit: 150,
+//   queueLimit: 0,
+// });
 
 const dbTimezone = process.env.DB_TIMEZONE || "+05:30";
 
@@ -52,7 +63,7 @@ pool.on("connection", (connection) => {
 });
 
 // Convert pool to promise-based (was missing - caused async/await crash)
-const promisePool = pool.promise();
+// const promisePool = pool.promise();
 
 // Multer config for selfie uploads //local storage for attendance
 const localDiskStorage = multer.diskStorage({
@@ -97,26 +108,26 @@ module.exports={
   SelfieUpload,
   employeePhotoUpload
 }
-app.post("/addDepartmentName", (req, res) => {
-  console.log(req.body);
-  const departmentName = req.body.departmentName;
+// app.post("/addDepartmentName", (req, res) => {
+//   console.log(req.body);
+//   const departmentName = req.body.departmentName;
 
-  const sql = `INSERT INTO departments (department_name) VALUES (?)`;
-  pool.query(sql, [departmentName], (err, result) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).json({
-        success: false,
-        message: err,
-      });
-    }
+//   const sql = `INSERT INTO departments (department_name) VALUES (?)`;
+//   pool.query(sql, [departmentName], (err, result) => {
+//     if (err) {
+//       console.log(err);
+//       return res.status(500).json({
+//         success: false,
+//         message: err,
+//       });
+//     }
 
-    res.status(200).json({
-      success: true,
-      message: "Department Added Successfully",
-    });
-  });
-});
+//     res.status(200).json({
+//       success: true,
+//       message: "Department Added Successfully",
+//     });
+//   });
+// });
 
 
 //---------- Fetch Users API---------------------------------------------------
@@ -128,272 +139,272 @@ app.get("/fetch-user",async(req, res)=>{
   
 })
 
-app.get("/fetch-departments", (req, res) => {
-  const status = req.query.status;
+// app.get("/fetch-departments", (req, res) => {
+//   const status = req.query.status;
 
-  let sql = `SELECT * FROM departments`;
-  const params = [];
+//   let sql = `SELECT * FROM departments`;
+//   const params = [];
 
-  if (status === "Active" || status === "Inactive") {
-    sql = `SELECT * FROM departments WHERE status = ?`;
-    params.push(status);
-  }
+//   if (status === "Active" || status === "Inactive") {
+//     sql = `SELECT * FROM departments WHERE status = ?`;
+//     params.push(status);
+//   }
 
-  pool.query(sql, params, (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        success: false,
-        message: err,
-      });
-    }
-    res.status(200).json({
-      success: true,
-      message: "Fetched Successfully",
-      result,
-    });
-  });
-});
+//   pool.query(sql, params, (err, result) => {
+//     if (err) {
+//       return res.status(500).json({
+//         success: false,
+//         message: err,
+//       });
+//     }
+//     res.status(200).json({
+//       success: true,
+//       message: "Fetched Successfully",
+//       result,
+//     });
+//   });
+// });
 
-app.put("/updateDepartment/:id", (req, res) => {
-  console.log(req.body);
-  const id = req.params.id;
-  const departmentName = req.body.departmentName;
+// app.put("/updateDepartment/:id", (req, res) => {
+//   console.log(req.body);
+//   const id = req.params.id;
+//   const departmentName = req.body.departmentName;
 
-  const sql = `
-      UPDATE departments
-      SET department_name = ?
-      WHERE id = ?
-    `;
+//   const sql = `
+//       UPDATE departments
+//       SET department_name = ?
+//       WHERE id = ?
+//     `;
 
-  pool.query(sql, [departmentName, id], (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        success: false,
-        message: err,
-      });
-    }
+//   pool.query(sql, [departmentName, id], (err, result) => {
+//     if (err) {
+//       return res.status(500).json({
+//         success: false,
+//         message: err,
+//       });
+//     }
 
-    res.status(200).json({
-      success: true,
-      message: "Department Updated Successfully",
-    });
-  });
-});
+//     res.status(200).json({
+//       success: true,
+//       message: "Department Updated Successfully",
+//     });
+//   });
+// });
 
-app.put("/updateDepartmentStatus/:id", (req, res) => {
-  const id = req.params.id;
-  const status = req.body.status;
+// app.put("/updateDepartmentStatus/:id", (req, res) => {
+//   const id = req.params.id;
+//   const status = req.body.status;
 
-  const sql = `
-      UPDATE departments 
-      SET status = ? 
-      WHERE id = ?
-    `;
+//   const sql = `
+//       UPDATE departments 
+//       SET status = ? 
+//       WHERE id = ?
+//     `;
 
-  pool.query(sql, [status, id], (err, result) => {
-    if (err) {
-      console.log("Update ERROR:", err);
+//   pool.query(sql, [status, id], (err, result) => {
+//     if (err) {
+//       console.log("Update ERROR:", err);
 
-      return res.status(500).json({
-        success: false,
-        error: err.sqlMessage,
-        fullError: err,
-      });
-    }
+//       return res.status(500).json({
+//         success: false,
+//         error: err.sqlMessage,
+//         fullError: err,
+//       });
+//     }
 
-    res.status(200).json({
-      success: true,
-      message: "Department Status Updated Successfully",
-      result,
-    });
-  });
-});
+//     res.status(200).json({
+//       success: true,
+//       message: "Department Status Updated Successfully",
+//       result,
+//     });
+//   });
+// });
 
-app.post("/addDesignation", (req, res) => {
-  console.log(req.body);
-  const designationName = req.body.designation_name;
-  const department_id = req.body.department_id;
-  const status = req.body.status || "Active";
+// app.post("/addDesignation", (req, res) => {
+//   console.log(req.body);
+//   const designationName = req.body.designation_name;
+//   const department_id = req.body.department_id;
+//   const status = req.body.status || "Active";
 
-  const sql = `INSERT INTO designations(designation_name, department_id, status) VALUES(?, ?, ?)`;
+//   const sql = `INSERT INTO designations(designation_name, department_id, status) VALUES(?, ?, ?)`;
 
-  pool.query(sql, [designationName, department_id, status], (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        success: false,
-        message: err,
-      });
-    }
-    res.status(200).json({
-      success: true,
-      message: "Data Saved Successfully",
-    });
-  });
-});
+//   pool.query(sql, [designationName, department_id, status], (err, result) => {
+//     if (err) {
+//       return res.status(500).json({
+//         success: false,
+//         message: err,
+//       });
+//     }
+//     res.status(200).json({
+//       success: true,
+//       message: "Data Saved Successfully",
+//     });
+//   });
+// });
 
 
 
-app.put("/updateDesignation/:id", (req, res) => {
-  const id = req.params.id;
-  const designationName = req.body.designation_name;
-  const department_id = req.body.department_id;
-  const status = req.body.status;
+// app.put("/updateDesignation/:id", (req, res) => {
+//   const id = req.params.id;
+//   const designationName = req.body.designation_name;
+//   const department_id = req.body.department_id;
+//   const status = req.body.status;
 
-  const sql = `
-      UPDATE designations
-      SET designation_name = ?, department_id = ?, status = ?
-      WHERE id = ?
-    `;
+//   const sql = `
+//       UPDATE designations
+//       SET designation_name = ?, department_id = ?, status = ?
+//       WHERE id = ?
+//     `;
 
-  pool.query(
-    sql,
-    [designationName, department_id, status, id],
-    (err, result) => {
-      if (err) {
-        console.log("Update Error: ", err);
+//   pool.query(
+//     sql,
+//     [designationName, department_id, status, id],
+//     (err, result) => {
+//       if (err) {
+//         console.log("Update Error: ", err);
 
-        return res.status(500).json({
-          success: false,
-          message: err.sqlMessage,
-          fullError: err,
-        });
-      }
+//         return res.status(500).json({
+//           success: false,
+//           message: err.sqlMessage,
+//           fullError: err,
+//         });
+//       }
 
-      res.status(200).json({
-        success: true,
-        message: "Updated Successfully",
-        result,
-      });
-    },
-  );
-});
+//       res.status(200).json({
+//         success: true,
+//         message: "Updated Successfully",
+//         result,
+//       });
+//     },
+//   );
+// });
 
-app.get("/fetch-designation", (req, res) => {
-  const status = req.query.status;
+// app.get("/fetch-designation", (req, res) => {
+//   const status = req.query.status;
 
-  let sql = `
-      SELECT designations.*, departments.department_name AS department
-      FROM designations
-      LEFT JOIN departments ON designations.department_id = departments.id
-    `;
-  const params = [];
+//   let sql = `
+//       SELECT designations.*, departments.department_name AS department
+//       FROM designations
+//       LEFT JOIN departments ON designations.department_id = departments.id
+//     `;
+//   const params = [];
 
-  if (status === "Active" || status === "Inactive") {
-    sql = `SELECT designations.*,
-      departments.department_name AS department
-      FROM designations
-      LEFT JOIN departments ON designations.department_id = departments.id
-      WHERE designations.status = ?
-    `;
-    params.push(status);
-  }
+//   if (status === "Active" || status === "Inactive") {
+//     sql = `SELECT designations.*,
+//       departments.department_name AS department
+//       FROM designations
+//       LEFT JOIN departments ON designations.department_id = departments.id
+//       WHERE designations.status = ?
+//     `;
+//     params.push(status);
+//   }
 
-  pool.query(sql, params, (err, result) => {
-    if (err) {
-      console.log("Update ERROR:", err);
+//   pool.query(sql, params, (err, result) => {
+//     if (err) {
+//       console.log("Update ERROR:", err);
 
-      return res.status(500).json({
-        success: false,
-        error: err.sqlMessage,
-        fullError: err,
-      });
-    }
+//       return res.status(500).json({
+//         success: false,
+//         error: err.sqlMessage,
+//         fullError: err,
+//       });
+//     }
 
-    res.status(200).json({
-      success: true,
-      message: "Fetching Successfully",
-      result,
-    });
-  });
-});
+//     res.status(200).json({
+//       success: true,
+//       message: "Fetching Successfully",
+//       result,
+//     });
+//   });
+// });
 
-app.get("/designationStatus", (req, res) => {
-  const sql = `SELECT designations.*, 
-    departments.department_name AS department
-    FROM designations
-    JOIN departments ON designations.department_id = departments.id
-    WHERE designations.status = 'Active'
-    AND departments.status = 'Active'
-  `;
+// app.get("/designationStatus", (req, res) => {
+//   const sql = `SELECT designations.*, 
+//     departments.department_name AS department
+//     FROM designations
+//     JOIN departments ON designations.department_id = departments.id
+//     WHERE designations.status = 'Active'
+//     AND departments.status = 'Active'
+//   `;
 
-  pool.query(sql, (err, result) => {
-    if (err) {
-      console.log("Fetch Error: ", err);
+//   pool.query(sql, (err, result) => {
+//     if (err) {
+//       console.log("Fetch Error: ", err);
 
-      return res.status(500).json({
-        success: false,
-        message: err.sqlMessage,
-        fullError: err,
-      });
-    }
+//       return res.status(500).json({
+//         success: false,
+//         message: err.sqlMessage,
+//         fullError: err,
+//       });
+//     }
 
-    res.status(200).json({
-      success: true,
-      message: "Fetching Successfully",
-      result,
-    });
-  });
-});
+//     res.status(200).json({
+//       success: true,
+//       message: "Fetching Successfully",
+//       result,
+//     });
+//   });
+// });
 
-app.post("/addBranch", (req, res) => {
-  console.log(req.body);
-  const branchName = req.body.branchName;
-  const address = req.body.address;
-  const city = req.body.city;
-  const state = req.body.state;
-  const pincode = req.body.pincode;
+// app.post("/addBranch", (req, res) => {
+//   console.log(req.body);
+//   const branchName = req.body.branchName;
+//   const address = req.body.address;
+//   const city = req.body.city;
+//   const state = req.body.state;
+//   const pincode = req.body.pincode;
 
-  const sql = `INSERT INTO branches (branch_name, address, city, state, pincode) VALUES(?,?,?,?,?)`;
-  pool.query(
-    sql,
-    [branchName, address, city, state, pincode],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).json({
-          success: false,
-          message: err.sqlMessage,
-          fullError: err,
-        });
-      }
-      res.status(200).json({
-        success: true,
-        message: "Data Added Successfully",
-      });
-    },
-  );
-});
+//   const sql = `INSERT INTO branches (branch_name, address, city, state, pincode) VALUES(?,?,?,?,?)`;
+//   pool.query(
+//     sql,
+//     [branchName, address, city, state, pincode],
+//     (err, result) => {
+//       if (err) {
+//         console.log(err);
+//         return res.status(500).json({
+//           success: false,
+//           message: err.sqlMessage,
+//           fullError: err,
+//         });
+//       }
+//       res.status(200).json({
+//         success: true,
+//         message: "Data Added Successfully",
+//       });
+//     },
+//   );
+// });
 
-app.get("/fetch-branches", (req, res) => {
-  const status = req.query.status;
-  let sql = `SELECT * FROM branches;`;
+// app.get("/fetch-branches", (req, res) => {
+//   const status = req.query.status;
+//   let sql = `SELECT * FROM branches;`;
 
-  const params = [];
+//   const params = [];
 
-  if (status === "Active" || status === "Inactive") {
-    sql = `
-        SELECT * FROM branches
-        WHERE status = ?
-      `;
-    params.push(status);
-  }
+//   if (status === "Active" || status === "Inactive") {
+//     sql = `
+//         SELECT * FROM branches
+//         WHERE status = ?
+//       `;
+//     params.push(status);
+//   }
 
-  pool.query(sql, params, (err, result) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).json({
-        success: false,
-        message: err.sqlMessage,
-        fullError: err,
-      });
-    }
-    res.status(200).json({
-      success: true,
-      message: "Fetch Successfully",
-      result,
-    });
-  });
-});
+//   pool.query(sql, params, (err, result) => {
+//     if (err) {
+//       console.log(err);
+//       return res.status(500).json({
+//         success: false,
+//         message: err.sqlMessage,
+//         fullError: err,
+//       });
+//     }
+//     res.status(200).json({
+//       success: true,
+//       message: "Fetch Successfully",
+//       result,
+//     });
+//   });
+// });
 
 app.put("/updateBranch/:id", (req, res) => {
   const id = req.params.id;
@@ -433,158 +444,158 @@ app.put("/updateBranch/:id", (req, res) => {
   });
 });
 
-app.put("/updateBranchStatus/:id", (req, res) => {
-  const id = req.params.id;
-  const status = req.body.status;
+// app.put("/updateBranchStatus/:id", (req, res) => {
+//   const id = req.params.id;
+//   const status = req.body.status;
 
-  const sql = `
-      UPDATE branches
-      SET status = ?
-      WHERE id = ?
-    `;
+//   const sql = `
+//       UPDATE branches
+//       SET status = ?
+//       WHERE id = ?
+//     `;
 
-  pool.query(sql, [status, id], (err, result) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).json({
-        success: false,
-        message: err.sqlMessage,
-        fullError: err,
-      });
-    }
+//   pool.query(sql, [status, id], (err, result) => {
+//     if (err) {
+//       console.log(err);
+//       return res.status(500).json({
+//         success: false,
+//         message: err.sqlMessage,
+//         fullError: err,
+//       });
+//     }
 
-    res.status(200).json({
-      success: true,
-      message: "Status Updated Successfully",
-      result,
-    });
-  });
-});
+//     res.status(200).json({
+//       success: true,
+//       message: "Status Updated Successfully",
+//       result,
+//     });
+//   });
+// });
 
-app.post("/addShift", (req, res) => {
-  console.log(req.body);
-  const shiftName = req.body.shiftName;
-  const startTime = req.body.startTime;
-  const endTime = req.body.endTime;
-  const lateAfter = req.body.lateAfter;
-  const halfdayAfter = req.body.halfdayAfter;
+// app.post("/addShift", (req, res) => {
+//   console.log(req.body);
+//   const shiftName = req.body.shiftName;
+//   const startTime = req.body.startTime;
+//   const endTime = req.body.endTime;
+//   const lateAfter = req.body.lateAfter;
+//   const halfdayAfter = req.body.halfdayAfter;
 
-  const sql = `INSERT INTO shift_master (shift_name, start_time, end_time, late_after, half_day_after) VALUES (?, ?, ?, ?, ?)`;
+//   const sql = `INSERT INTO shift_master (shift_name, start_time, end_time, late_after, half_day_after) VALUES (?, ?, ?, ?, ?)`;
 
-  pool.query(
-    sql,
-    [shiftName, startTime, endTime, lateAfter, halfdayAfter],
-    (err, result) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({
-          success: false,
-          message: err.sqlMessage,
-          fullError: err,
-        });
-      }
+//   pool.query(
+//     sql,
+//     [shiftName, startTime, endTime, lateAfter, halfdayAfter],
+//     (err, result) => {
+//       if (err) {
+//         console.error(err);
+//         return res.status(500).json({
+//           success: false,
+//           message: err.sqlMessage,
+//           fullError: err,
+//         });
+//       }
 
-      res.status(200).json({
-        success: true,
-        message: "Added Successfully",
-      });
-    },
-  );
-});
+//       res.status(200).json({
+//         success: true,
+//         message: "Added Successfully",
+//       });
+//     },
+//   );
+// });
 
-app.get("/fetch-shifts", (req, res) => {
-  const status = req.query.status;
+// app.get("/fetch-shifts", (req, res) => {
+//   const status = req.query.status;
 
-  let sql = `SELECT * FROM shift_master`;
-  const params = [];
+//   let sql = `SELECT * FROM shift_master`;
+//   const params = [];
 
-  if (status === "Active" || status === "Inactive") {
-    sql = `
-        SELECT * FROM shift_master
-        WHERE status = ?
-      `;
-    params.push(status);
-  }
+//   if (status === "Active" || status === "Inactive") {
+//     sql = `
+//         SELECT * FROM shift_master
+//         WHERE status = ?
+//       `;
+//     params.push(status);
+//   }
 
-  pool.query(sql, params, (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        success: false,
-        message: err.sqlMessage,
-        fullError: err,
-      });
-    }
-    res.status(200).json({
-      success: true,
-      message: "Fetch Successfully",
-      result,
-    });
-  });
-});
+//   pool.query(sql, params, (err, result) => {
+//     if (err) {
+//       return res.status(500).json({
+//         success: false,
+//         message: err.sqlMessage,
+//         fullError: err,
+//       });
+//     }
+//     res.status(200).json({
+//       success: true,
+//       message: "Fetch Successfully",
+//       result,
+//     });
+//   });
+// });
 
-app.put("/updateShift/:id", (req, res) => {
-  const id = req.params.id;
-  const shiftName = req.body.shiftName;
-  const startTime = req.body.startTime;
-  const endTime = req.body.endTime;
-  const lateAfter = req.body.lateAfter;
-  const halfdayAfter = req.body.halfdayAfter;
+// app.put("/updateShift/:id", (req, res) => {
+//   const id = req.params.id;
+//   const shiftName = req.body.shiftName;
+//   const startTime = req.body.startTime;
+//   const endTime = req.body.endTime;
+//   const lateAfter = req.body.lateAfter;
+//   const halfdayAfter = req.body.halfdayAfter;
 
-  const sql = `
-      UPDATE shift_master
-      SET shift_name = ?,
-          start_time = ?,
-          end_time = ?,
-          late_after = ?,
-          half_day_after = ?
-      WHERE id = ?
-    `;
+//   const sql = `
+//       UPDATE shift_master
+//       SET shift_name = ?,
+//           start_time = ?,
+//           end_time = ?,
+//           late_after = ?,
+//           half_day_after = ?
+//       WHERE id = ?
+//     `;
 
-  const params = [shiftName, startTime, endTime, lateAfter, halfdayAfter, id];
+//   const params = [shiftName, startTime, endTime, lateAfter, halfdayAfter, id];
 
-  pool.query(sql, params, (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({
-        success: false,
-        message: err.sqlMessage,
-        fullError: err,
-      });
-    }
+//   pool.query(sql, params, (err, result) => {
+//     if (err) {
+//       console.error(err);
+//       return res.status(500).json({
+//         success: false,
+//         message: err.sqlMessage,
+//         fullError: err,
+//       });
+//     }
 
-    res.status(200).json({
-      success: true,
-      message: "Shift Updated Successfully",
-    });
-  });
-});
+//     res.status(200).json({
+//       success: true,
+//       message: "Shift Updated Successfully",
+//     });
+//   });
+// });
 
-app.put("/updateShiftStatus/:id", (req, res) => {
-  const id = req.params.id;
-  const status = req.body.status;
+// app.put("/updateShiftStatus/:id", (req, res) => {
+//   const id = req.params.id;
+//   const status = req.body.status;
 
-  const sql = `
-      UPDATE shift_master
-      SET status = ?
-      WHERE id = ?
-    `;
+//   const sql = `
+//       UPDATE shift_master
+//       SET status = ?
+//       WHERE id = ?
+//     `;
 
-  pool.query(sql, [status, id], (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({
-        success: false,
-        message: err.sqlMessage,
-        fullError: err,
-      });
-    }
+//   pool.query(sql, [status, id], (err, result) => {
+//     if (err) {
+//       console.error(err);
+//       return res.status(500).json({
+//         success: false,
+//         message: err.sqlMessage,
+//         fullError: err,
+//       });
+//     }
 
-    res.status(200).json({
-      success: true,
-      message: "Status Updated Successfully",
-    });
-  });
-});
+//     res.status(200).json({
+//       success: true,
+//       message: "Status Updated Successfully",
+//     });
+//   });
+// });
 
 app.post("/addHolidays", (req, res) => {
   console.log(req.body);
