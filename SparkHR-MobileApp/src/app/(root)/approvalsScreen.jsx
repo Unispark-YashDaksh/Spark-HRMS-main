@@ -68,7 +68,7 @@ export default function ApprovalsScreen() {
       const employeeId = await AsyncStorage.getItem("employee_id");
       if (!employeeId) return;
       const res = await axios.get(
-        `${VITE_API}/pending-approvals/${employeeId}`,
+        `${VITE_API}/pendingApprovals/${employeeId}`,
       );
       if (res.data.success) {
         setRequests(res.data.requests);
@@ -128,7 +128,7 @@ export default function ApprovalsScreen() {
             if (item.requestType === "WFH") {
               // WFH uses the dedicated approve endpoint
               res = await axios.put(
-                `${VITE_API}/wfh-request/${item.id}/approve`,
+                `${VITE_API}/wfhRequestStatus/${item.id}`,
                 {
                   status: newStatus,
                   approved_by: parseInt(employeeId),
@@ -137,7 +137,7 @@ export default function ApprovalsScreen() {
             } else {
               // Leave uses the existing leave status endpoint
               res = await axios.put(
-                `${VITE_API}/leave-applications/${item.id}/status`,
+                `${VITE_API}/updateLeaveStatus/${item.id}`,
                 {
                   status: newStatus,
                   approved_by: parseInt(employeeId),

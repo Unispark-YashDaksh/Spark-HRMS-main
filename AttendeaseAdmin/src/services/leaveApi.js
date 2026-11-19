@@ -8,7 +8,7 @@ export const autoAssignLeaveBalance = async (employeeId, payload = {}) => {
 
 export const fetchLeaveBalance = async (employeeId, year) => {
   const params = year ? { year } : {};
-  const res = await axios.get(`${apiUrl}/employees/${employeeId}/leave-balance`, { params });
+  const res = await axios.get(`${apiUrl}/fetchLeaveBalance/${employeeId}`, { params });
   return res.data;
 };
 
@@ -18,12 +18,12 @@ export const applyLeave = async (payload) => {
 };
 
 export const fetchLeaveApplications = async (params = {}) => {
-  const res = await axios.get(`${apiUrl}/leave-applications`, { params });
+  const res = await axios.get(`${apiUrl}/fetchLeaveRequests`, { params });
   return res.data;
 };
 
 export const updateLeaveStatus = async (id, status, approvedBy) => {
-  const res = await axios.put(`${apiUrl}/leave-applications/${id}/status`, {
+  const res = await axios.put(`${apiUrl}/updateLeaveStatus/${id}`, {
     status,
     approved_by: approvedBy,
   });
@@ -31,12 +31,12 @@ export const updateLeaveStatus = async (id, status, approvedBy) => {
 };
 
 export const createLeaveAdjustment = async (payload) => {
-  const res = await axios.post(`${apiUrl}/leave-adjustments`, payload);
+  const res = await axios.post(`${apiUrl}/leaveAdjustment`, payload);
   return res.data;
 };
 
 export const runCarryForward = async (fromYear, toYear) => {
-  const res = await axios.post(`${apiUrl}/carry-forward`, {
+  const res = await axios.post(`${apiUrl}/carryforwardleaves`, {
     from_year: fromYear,
     to_year: toYear,
   });

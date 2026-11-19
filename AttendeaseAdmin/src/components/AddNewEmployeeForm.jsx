@@ -110,7 +110,7 @@ function AddNewEmployeeForm({
   };
   const fetchDepartments = async () => {
     const response = await axios.get(
-      `${apiUrl}/fetch-departments?status=Active`,
+      `${apiUrl}/fetchDepartments?status=Active`,
     );
 
     setShowDepartments(response.data.result);
@@ -130,18 +130,18 @@ function AddNewEmployeeForm({
       : showDepartments;
 
   const fetchBranchs = async () => {
-    const response = await axios.get(`${apiUrl}/fetch-branches`);
+    const response = await axios.get(`${apiUrl}/fetchBranches`);
 
     setShowBranchs(response.data.result);
   };
   const fetchShifts = async () => {
-    const response = await axios.get(`${apiUrl}/fetch-shifts`);
+    const response = await axios.get(`${apiUrl}/fetchShift`);
 
     setShowShifts(response.data.result);
   };
 
   const fetchRoles = async () => {
-    const response = await axios.get(`${apiUrl}/fetch-roles`);
+    const response = await axios.get(`${apiUrl}/fetchRoles`);
 
     setShowRoles(response.data.result);
   };
@@ -153,7 +153,7 @@ function AddNewEmployeeForm({
   };
 
   const fetchLastGenratedEmployee= async()=>{
-    const response= await axios.get(`${apiUrl}/fetch-last-employee-code`);
+    const response= await axios.get(`${apiUrl}/fetchLastEmployeeCode`);
     setFetchLastGenratedEmployeeCode(response.data.employee_code);
     console.log(response.data.employee_code)
   }
@@ -172,7 +172,7 @@ function AddNewEmployeeForm({
       : showDesignation;
 
   const fetchReportingManagers = async () => {
-    const response = await axios.get(`${apiUrl}/activeEmployee`);
+    const response = await axios.get(`${apiUrl}/fetchActiveEmployees`);
     setReportingManagers(response.data.result);
   };
 

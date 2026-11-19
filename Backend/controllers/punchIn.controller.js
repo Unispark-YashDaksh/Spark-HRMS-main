@@ -32,7 +32,7 @@ async function punchIn(req, res) {
     }
 
     // Double-check: ensure no duplicate punch in for today
-    const [existing] = await promisePool.query(
+    const [existing] = await pool.query(
       `SELECT * FROM attendance WHERE employee_id = ? AND attendance_date >= CURDATE() AND attendance_date < CURDATE() + INTERVAL 1 DAY`,
       [employee_id],
     );
@@ -46,7 +46,7 @@ async function punchIn(req, res) {
         .json({ success: false, message: "Already punched in today" });
     }
     const shiftSQL=  `SELECT s.start_time, s.late_after, s.half_day_after FROM employee_master e JOIN shift_master s ON e.shift_id= s.id WHERE e.id=?`
-    const [shiftData]= await promisePool.query(shiftSQL, [employee_id]);
+    const [shiftData]= await pool.query(shiftSQL, [employee_id]);
     if(shiftData.length===0){
       return res.status(400).json({
         success: false,
@@ -97,7 +97,7 @@ async function punchIn(req, res) {
 
     const selfiePath = `/uploads/${req.file.filename}`;
 
-    const [result] = await promisePool.query(
+    const [result] = await pool.query(
       `INSERT INTO attendance
        (employee_id, attendance_date, punch_in, punch_in_selfie, punch_in_latitude, punch_in_longitude, gps_location, attendance_mode, office_location_id, status, late_minutes, is_late)
        VALUES (?, CURDATE(), CURTIME(), ?, ?, ?, ?, ?, ?, ?, ?, ?)`,

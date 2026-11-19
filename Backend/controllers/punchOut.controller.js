@@ -11,7 +11,7 @@ async function punchOut(req, res) {
     }
 
     // Find today's attendance record
-    const [existing] = await promisePool.query(
+    const [existing] = await pool.query(
       `SELECT * FROM attendance WHERE employee_id = ? AND attendance_date = CURDATE()`,
       [employee_id],
     );
@@ -33,7 +33,7 @@ async function punchOut(req, res) {
       selfiePath = `/uploads/${req.file.filename}`;
     }
 
-    await promisePool.query(
+    await pool.query(
       `UPDATE attendance
        SET punch_out = CURTIME(),
            punch_out_selfie = COALESCE(?, punch_out_selfie),

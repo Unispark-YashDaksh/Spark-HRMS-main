@@ -37,7 +37,7 @@ export default function Home() {
         console.log("[Check 1] Got Employee id from asysncstiirage:", saveId);
 
         if(saveId){
-          const response = await axios.get(`${VITE_API}/profile/${saveId}`);
+          const response = await axios.get(`${VITE_API}/employeeProfile/${saveId}`);
           console.log("Hitting API")
 
           if(response.data.success){

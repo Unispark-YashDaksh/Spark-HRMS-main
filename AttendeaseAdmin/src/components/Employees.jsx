@@ -27,7 +27,7 @@ function EmployeeMaster() {
 
   const getEmployees = async (page, status) => {
     const response = await axios.get(
-      `${apiUrl}/fetch-employees?page=${page}&limit=${itemsPerPage}&status=${status}`,
+      `${apiUrl}/fetchEmployees?page=${page}&limit=${itemsPerPage}&status=${status}`,
     );
 
     return {

@@ -24,7 +24,7 @@ export default function AttendanceReport() {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    axios.get(`${apiUrl}/activeEmployee`).then((res) => {
+    axios.get(`${apiUrl}/fetchActiveEmployees`).then((res) => {
       if (res.data.success) setEmployees(res.data.result || []);
     }).catch(() => {});
   }, []);

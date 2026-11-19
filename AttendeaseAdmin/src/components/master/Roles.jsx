@@ -20,7 +20,7 @@ function Roles() {
   async function getRoles(filter) {
     try {
       const response = await axios.get(
-        `${apiUrl}/fetch-roles?status=${filter}`,
+        `${apiUrl}/fetchRoles?status=${filter}`,
       );
 
       return Array.isArray(response.data.result) ? response.data.result : [];

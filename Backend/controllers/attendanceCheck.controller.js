@@ -15,8 +15,8 @@ async function attendance(req, res) {
 
     
 
-    // Also use promisePool.query for async/await
-    const [result] = await promisePool.query(
+
+    const [result] = await pool.query(
       `SELECT * FROM attendance WHERE employee_id = ? AND attendance_date >= CURDATE() AND attendance_date < CURDATE() + INTERVAL 1 DAY ORDER BY id DESC LIMIT 1`,
       [employeeId],
     );

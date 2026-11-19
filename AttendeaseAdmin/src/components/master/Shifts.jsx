@@ -23,7 +23,7 @@ function Shifts() {
   async function getShifts(filter) {
     try {
       const response = await axios.get(
-        `${apiUrl}/fetch-shifts?status=${filter}`,
+        `${apiUrl}/fetchShift?status=${filter}`,
       );
 
       return Array.isArray(response.data.result) ? response.data.result : [];

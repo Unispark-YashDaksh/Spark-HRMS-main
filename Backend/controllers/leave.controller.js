@@ -1,6 +1,6 @@
 const pool= require("../config/db");
 
-async function assignLeaveBalance(params) {
+async function assignLeaveBalance(req, res) {
   const {id}= req.params;
 
   try{
@@ -17,7 +17,7 @@ async function assignLeaveBalance(params) {
     //check if balance already exitNo Leaves for current financial year
     const now = new Date();
     const currentFY = now.getMonth() >= 3 ? `${now.getFullYear()}-${String(now.getFullYear() + 1).slice(-2)}` : `${now.getFullYear() - 1}-${String(now.getFullYear()).slice(-2)}`;
-    const [existing]= await promisePool.query(`SELECT id FROM employee_leave_balances WHERE employee_id=? AND financial_year= ?`,[id, currentFY]);
+    const [existing]= await pool.query(`SELECT id FROM employee_leave_balances WHERE employee_id=? AND financial_year= ?`,[id, currentFY]);
 
     // Rows check 
     if(existing.length>0){
@@ -410,7 +410,7 @@ async function carryForwardLeaves(req ,res) {
 
       if (existing.length > 0) {
         // Update existing — add carry days to totals
-        await promisePool.query(
+        await pool.query(
           `UPDATE employee_leave_balances 
            SET total_days = total_days + ?,
                remaining_days = remaining_days + ?
@@ -476,7 +476,7 @@ async function fetchLeaveBalance(req, res) {
     //Fetch Balances with leave type
     const [balances]= await pool.query(`SELECT elb.id, elb.total_days, elb.used_days, elb.remaining_days, elb.financial_year, lt.id AS leave_type_id, lt.code, lt.leave_name FROM employee_leave_balances elb JOIN leave_types lt ON lt.id= elb.leave_type_id WHERE elb.employee_id= ? AND elb.financial_year= ? ORDER BY lt.code`,[id, currentFY]);
 
-    if(balances===0){
+    if(balances.length===0){
       return res.status(200).json({
         message: "No Balance found for this year",
         data: [],

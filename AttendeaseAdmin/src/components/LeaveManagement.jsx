@@ -31,7 +31,7 @@ function LeaveManagement() {
   const [assignResult, setAssignResult] = useState(null);
 
   useEffect(() => {
-    axios.get(`${apiUrl}/activeEmployee`)
+    axios.get(`${apiUrl}/fetchActiveEmployees`)
       .then((res) => setEmployees(res.data.result || []))
       .catch(() => {});
   }, []);
@@ -61,8 +61,8 @@ function LeaveManagement() {
   const [adjResult, setAdjResult] = useState(null);
 
   // Carry Forward
-  const [cfFrom, setCfFrom] = useState("2025-2026");
-  const [cfTo, setCfTo] = useState("2026-2027");
+  const [cfFrom, setCfFrom] = useState("2025-2026");//harcoded
+  const [cfTo, setCfTo] = useState("2026-2027");//harcoded
   const [cfResult, setCfResult] = useState(null);
 
   const showMessage = (text, isError = false) => {

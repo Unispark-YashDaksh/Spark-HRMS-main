@@ -42,7 +42,7 @@ function HolidaysManagement() {
   // Fetch Holidays From DB
   const fetchHolidays = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/fetch-holidays`);
+      const response = await axios.get(`${apiUrl}/fetchHolidays`);
 
       const holidayObj = {};
       const holidayArr = [];

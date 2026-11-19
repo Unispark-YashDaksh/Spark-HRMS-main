@@ -4,6 +4,6 @@ const router= express.Router();
 
 const {bypassOfficeLocationRadius}= require("../controllers/officeLocation.controller");
 
-router.post("/byPassOfficeLocation/:employeeId", bypassOfficeLocationRadius);
+router.get("/office-location/:employeeId", bypassOfficeLocationRadius);
 
 module.exports=router;

@@ -24,7 +24,7 @@ const wfhRoutes= require("./routes/wfh.routes");
 const managerRoutes= require("./routes/manager.routes");
 const officeLocationRoutes= require("./routes/officeLocation.routes")
 
-const {storage}= require("./cloudConfig");
+const {storage}= require("./config/cloudinaryConfig");
 const upload= multer({storage});
 
 const app = express();
@@ -56,7 +56,7 @@ app.use("/", userAuthRoutes);
 app.use("/", leaveRoutes);
 app.use("/", wfhRoutes);
 app.use("/", managerRoutes);
-app.use("/", bypassOfficeLocationRadius)
+app.use("/", officeLocationRoutes);
 
 // Serve uploaded selfies as static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -89,29 +89,29 @@ pool.on("connection", (connection) => {
 // const promisePool = pool.promise();
 
 // Multer config for selfie uploads //local storage for attendance
-const localDiskStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");xl
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = `selfie_${Date.now()}_${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;
-    cb(null, uniqueName);
-  },
-});
-console.log(process.env.VITE_API)
+// const localDiskStorage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "uploads/");
+//   },
+//   filename: (req, file, cb) => {
+//     const uniqueName = `selfie_${Date.now()}_${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;
+//     cb(null, uniqueName);
+//   },
+// });
+// console.log(process.env.VITE_API)
 
-const SelfieUpload = multer({
-  storage: localDiskStorage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-  fileFilter: (req, file, cb) => {
-    const allowed = /jpeg|jpg|png|gif|webp/;
-    const ext = allowed.test(path.extname(file.originalname).toLowerCase());
-    const mime = allowed.test(file.mimetype);
-    if (ext && mime) return cb(null, true);
-    cb(new Error("Only image files allowed"));
-  },
-});
-// upload image particular image
+// const SelfieUpload = multer({
+//   storage: localDiskStorage,
+//   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+//   fileFilter: (req, file, cb) => {
+//     const allowed = /jpeg|jpg|png|gif|webp/;
+//     const ext = allowed.test(path.extname(file.originalname).toLowerCase());
+//     const mime = allowed.test(file.mimetype);
+//     if (ext && mime) return cb(null, true);
+//     cb(new Error("Only image files allowed"));
+//   },
+// });
+// // upload image particular image
 const employeePhotoStorage = multer({
   storage: storage,
   limits: {fileSize: 5*1024*1024}, // 5MB limit
@@ -128,7 +128,6 @@ const employeePhotoUpload = multer({
 
 
 module.exports={
-  SelfieUpload,
   employeePhotoUpload
 }
 // app.post("/addDepartmentName", (req, res) => {
@@ -907,101 +906,101 @@ app.get("/fetch-user",async(req, res)=>{
 //   );
 // });
 
-// app.put("/updateEmployee/:id",employeePhotoUpload.single("photo"),(req, res) => {
-//     const id = req.params.id;
-//     const employeeCode = req.body.employee_code;
-//     const employeeName = req.body.employee_name;
-//     const gender = req.body.gender;
-//     const designationId = req.body.designation_id;
-//     const departmentId = req.body.department_id;
-//     const branchId = req.body.branch_id;
-//     const shiftId = req.body.shift_id;
-//     const role = req.body.role_id;
-//     const reportingManagerId = req.body.reporting_manager_id || null;
-//     const employeementStatus = req.body.employeement_status;
-//     const employeeMobileNo = req.body.employee_mobile_no;
-//     const employeeEmailId = req.body.employee_email_id;
-//     const employeeJoiningDate = req.body.employee_joining_date || null;
-//     const city = req.body.city;
-//     const emergencyContactNo = req.body.emergency_contact_no;
-//     const employeeAadharNo = req.body.employee_adhar_no;
-//     const employeeBankAccNo = req.body.employee_bank_account_no;
-//     const employeeBnakName = req.body.employee_bank_name;
-//     const employeeIFSCCode = req.body.employee_bank_ifsc_code;
-//     const employeeUANNo = req.body.employee_uan_no;
-//     const photoUrl = req.file
-//       ? req.file.path
-//       : req.body.photo_url || null;
+app.put("/updateEmployee/:id",employeePhotoUpload.single("photo"),(req, res) => {
+    const id = req.params.id;
+    const employeeCode = req.body.employee_code;
+    const employeeName = req.body.employee_name;
+    const gender = req.body.gender;
+    const designationId = req.body.designation_id;
+    const departmentId = req.body.department_id;
+    const branchId = req.body.branch_id;
+    const shiftId = req.body.shift_id;
+    const role = req.body.role_id;
+    const reportingManagerId = req.body.reporting_manager_id || null;
+    const employeementStatus = req.body.employeement_status;
+    const employeeMobileNo = req.body.employee_mobile_no;
+    const employeeEmailId = req.body.employee_email_id;
+    const employeeJoiningDate = req.body.employee_joining_date || null;
+    const city = req.body.city;
+    const emergencyContactNo = req.body.emergency_contact_no;
+    const employeeAadharNo = req.body.employee_adhar_no;
+    const employeeBankAccNo = req.body.employee_bank_account_no;
+    const employeeBnakName = req.body.employee_bank_name;
+    const employeeIFSCCode = req.body.employee_bank_ifsc_code;
+    const employeeUANNo = req.body.employee_uan_no;
+    const photoUrl = req.file
+      ? req.file.path
+      : req.body.photo_url || null;
 
-//     const sql = `
-//       UPDATE employee_master
-//       SET employee_code = ?,
-//       employee_name = ?,
-//       gender = ?,
-//       designation_id = ?,
-//       department_id = ?,
-//       branch_id = ?,
-//       shift_id = ?,
-//       role_id = ?,
-//       reporting_manager_id = ?,
-//       employeement_status = ?,
-//       employee_mobile_no = ?,
-//       employee_email_id = ?,
-//       employee_joining_date = ?,
-//       city = ?,
-//       emergency_contact_no = ?,
-//       employee_adhar_no = ?,
-//       employee_bank_account_no = ?,
-//       employee_bank_name = ?,
-//       employee_bank_ifsc_code = ?,
-//       employee_uan_no = ?,
-//       photo_url = ?
-//       WHERE id = ?
-//     `;
+    const sql = `
+      UPDATE employee_master
+      SET employee_code = ?,
+      employee_name = ?,
+      gender = ?,
+      designation_id = ?,
+      department_id = ?,
+      branch_id = ?,
+      shift_id = ?,
+      role_id = ?,
+      reporting_manager_id = ?,
+      employeement_status = ?,
+      employee_mobile_no = ?,
+      employee_email_id = ?,
+      employee_joining_date = ?,
+      city = ?,
+      emergency_contact_no = ?,
+      employee_adhar_no = ?,
+      employee_bank_account_no = ?,
+      employee_bank_name = ?,
+      employee_bank_ifsc_code = ?,
+      employee_uan_no = ?,
+      photo_url = ?
+      WHERE id = ?
+    `;
 
-//     pool.query(
-//       sql,
-//       [
-//         employeeCode,
-//         employeeName,
-//         gender,
-//         designationId,
-//         departmentId,
-//         branchId,
-//         shiftId,
-//         role,
-//         reportingManagerId,
-//         employeementStatus,
-//         employeeMobileNo,
-//         employeeEmailId,
-//         employeeJoiningDate,
-//         city,
-//         emergencyContactNo,
-//         employeeAadharNo,
-//         employeeBankAccNo,
-//         employeeBnakName,
-//         employeeIFSCCode,
-//         employeeUANNo,
-//         photoUrl,
-//         id,
-//       ],
-//       (err, result) => {
-//         if (err) {
-//           console.log(err);
-//           return res.status(500).json({
-//             success: false,
-//             message: err.sqlMessage,
-//             fullError: err,
-//           });
-//         }
-//         res.status(200).json({
-//           success: true,
-//           message: "Data Updated Successfully",
-//           result,
-//         });
-//       },
-//     );
-//   });
+    pool.query(
+      sql,
+      [
+        employeeCode,
+        employeeName,
+        gender,
+        designationId,
+        departmentId,
+        branchId,
+        shiftId,
+        role,
+        reportingManagerId,
+        employeementStatus,
+        employeeMobileNo,
+        employeeEmailId,
+        employeeJoiningDate,
+        city,
+        emergencyContactNo,
+        employeeAadharNo,
+        employeeBankAccNo,
+        employeeBnakName,
+        employeeIFSCCode,
+        employeeUANNo,
+        photoUrl,
+        id,
+      ],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({
+            success: false,
+            message: err.sqlMessage,
+            fullError: err,
+          });
+        }
+        res.status(200).json({
+          success: true,
+          message: "Data Updated Successfully",
+          result,
+        });
+      },
+    );
+  });
 
 //fetch latest employee_code api
 // app.get("/fetch-last-employee-code", (req, res)=>{
@@ -2204,45 +2203,45 @@ app.get("/fetch-user",async(req, res)=>{
 // })
 
 // for employee use fetch Leave balance
-// app.get("/employees/:id/leave-balance", async(req, res)=>{
-//   const {id}= req.params;
-//   const {year}= req.query;
+app.get("/employees/:id/leave-balance", async(req, res)=>{
+  const {id}= req.params;
+  const {year}= req.query;
 
-//   try{
-//     const [employee]= await promisePool.query(`SELECT id, employee_email_id FROM employee_master WHERE id= ?`, [id]);
+  try{
+    const [employee]= await promisePool.query(`SELECT id, employee_email_id FROM employee_master WHERE id= ?`, [id]);
 
-//     if(employee.length===0){
-//       return res.status(404).json({
-//         error: "Employee Not Found"
-//       })
-//     }
+    if(employee.length===0){
+      return res.status(404).json({
+        error: "Employee Not Found"
+      })
+    }
 
-//     const now = new Date();
-//     const currentFY = year || (now.getMonth() >= 3 ? `${now.getFullYear()}-${String(now.getFullYear() + 1).slice(-2)}` : `${now.getFullYear() - 1}-${String(now.getFullYear()).slice(-2)}`);
-//     //Fetch Balances with leave type
-//     const [balances]= await promisePool.query(`SELECT elb.id, elb.total_days, elb.used_days, elb.remaining_days, elb.financial_year, lt.id AS leave_type_id, lt.code, lt.leave_name FROM employee_leave_balances elb JOIN leave_types lt ON lt.id= elb.leave_type_id WHERE elb.employee_id= ? AND elb.financial_year= ? ORDER BY lt.code`,[id, currentFY]);
+    const now = new Date();
+    const currentFY = year || (now.getMonth() >= 3 ? `${now.getFullYear()}-${String(now.getFullYear() + 1).slice(-2)}` : `${now.getFullYear() - 1}-${String(now.getFullYear()).slice(-2)}`);
+    //Fetch Balances with leave type
+    const [balances]= await promisePool.query(`SELECT elb.id, elb.total_days, elb.used_days, elb.remaining_days, elb.financial_year, lt.id AS leave_type_id, lt.code, lt.leave_name FROM employee_leave_balances elb JOIN leave_types lt ON lt.id= elb.leave_type_id WHERE elb.employee_id= ? AND elb.financial_year= ? ORDER BY lt.code`,[id, currentFY]);
 
-//     if(balances===0){
-//       return res.status(200).json({
-//         message: "No Balance found for this year",
-//         data: [],
-//         employee: employee[0].name
-//       });
-//     }
+    if(balances===0){
+      return res.status(200).json({
+        message: "No Balance found for this year",
+        data: [],
+        employee: employee[0].name
+      });
+    }
 
-//     //Return response
-//     res.status(200).json({
-//       employee: employee[0].name,
-//       financial_year: currentFY,
-//       total: balances.reduce((sum, b)=> sum * b.remaining_days, 0),
-//       leaves: balances
-//     })
-//   }catch(error){
-//     res.status(500).json({
-//       error: error.message
-//     });
-//   }
-// });
+    //Return response
+    res.status(200).json({
+      employee: employee[0].name,
+      financial_year: currentFY,
+      total: balances.reduce((sum, b)=> sum * b.remaining_days, 0),
+      leaves: balances
+    })
+  }catch(error){
+    res.status(500).json({
+      error: error.message
+    });
+  }
+});
 
 
 // app.post('/leave-applications', async (req, res) => {

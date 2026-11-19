@@ -44,6 +44,6 @@ import api from "./api";
  * See applyleaveScreen.jsx:97-103 for the identical pattern with applyLeave()
  */
 export const applyWFH = async (payload) => {
-  const res = await api.post("/wfh-request", payload);
+  const res = await api.post("/initiateWfhReq", payload);
   return res.data;
 };

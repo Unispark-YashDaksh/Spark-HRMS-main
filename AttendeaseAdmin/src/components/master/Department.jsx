@@ -18,7 +18,7 @@ function Department() {
 
   const getDepartments = async (filter) => {
     const response = await axios.get(
-      `${apiUrl}/fetch-departments?status=${filter}`,
+      `${apiUrl}/fetchDepartments?status=${filter}`,
     );
 
     return Array.isArray(response.data.result) ? response.data.result : [];
