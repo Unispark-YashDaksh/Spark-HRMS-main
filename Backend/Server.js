@@ -5,7 +5,6 @@ const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
 const { error } = require("console");
-const redisClient= require("./config/redis");
 const pool = require("./config/db");
 
 const departmentRoutes= require("./routes/department.routes");
