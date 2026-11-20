@@ -6,5 +6,4 @@ const {SelfieUpload}= require("../middleware/selfieUpload")
 
 router.post("/punchOut", SelfieUpload.single("selfie"), punchOut);
 
-
 module.exports= router;

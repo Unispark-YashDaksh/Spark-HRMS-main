@@ -1,6 +1,6 @@
 const multer= require("multer");
 const path= require("path");
-
+const {storage}= require("../config/cloudinaryConfig");
 // Multer config for selfie uploads //local storage for attendance
 const localDiskStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -13,7 +13,7 @@ const localDiskStorage = multer.diskStorage({
 });
 
 const SelfieUpload = multer({
-  storage: localDiskStorage,
+  storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: (req, file, cb) => {
     const allowed = /jpeg|jpg|png|gif|webp/;
