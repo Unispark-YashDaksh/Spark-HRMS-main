@@ -38,9 +38,6 @@ async function punchIn(req, res) {
     );
 
     if (existing.length > 0) {
-      // Clean up uploaded file if duplicate
-      const fs = require("fs");
-      if (req.file?.path) fs.unlink(req.file.path, () => {});
       return res
         .status(400)
         .json({ success: false, message: "Already punched in today" });
@@ -95,7 +92,7 @@ async function punchIn(req, res) {
       }
     }
 
-    const selfiePath = `/uploads/${req.file.filename}`;
+    const selfiePath = req.file?.path || null;
 
     const [result] = await pool.query(
       `INSERT INTO attendance
@@ -122,11 +119,6 @@ async function punchIn(req, res) {
     });
   } catch (err) {
     console.error("Punch In Error:", err);
-    // Clean up uploaded file on error
-    if (req.file?.path) {
-      const fs = require("fs");
-      fs.unlink(req.file.path, () => {});
-    }
     return res.status(500).json({ success: false, message: err.message });
   }
 }

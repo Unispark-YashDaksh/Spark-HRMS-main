@@ -28,11 +28,7 @@ async function punchOut(req, res) {
         .json({ success: false, message: "Already punched out today" });
     }
 
-    let selfiePath = null;
-    if (req.file) {
-      selfiePath = `/uploads/${req.file.filename}`;
-    }
-
+    let selfiePath = req.file?.path || null;
     await pool.query(
       `UPDATE attendance
        SET punch_out = CURTIME(),
@@ -49,10 +45,6 @@ async function punchOut(req, res) {
     });
   } catch (err) {
     console.error("Punch Out Error:", err);
-    if (req.file?.path) {
-      const fs = require("fs");
-      fs.unlink(req.file.path, () => {});
-    }
     return res.status(500).json({ success: false, message: err.message });
   }
 }
