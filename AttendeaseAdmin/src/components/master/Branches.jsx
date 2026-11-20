@@ -23,7 +23,7 @@ function Branches() {
   async function getBranches(filter) {
     try {
       const response = await axios.get(
-        `${apiUrl}/fetch-branches?status=${filter}`,
+        `${apiUrl}/fetchBranches?status=${filter}`,
       );
 
       return Array.isArray(response.data.result) ? response.data.result : [];

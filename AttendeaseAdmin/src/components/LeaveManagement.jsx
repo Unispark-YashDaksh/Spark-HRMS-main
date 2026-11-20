@@ -31,7 +31,7 @@ function LeaveManagement() {
   const [assignResult, setAssignResult] = useState(null);
 
   useEffect(() => {
-    axios.get(`${apiUrl}/activeEmployee`)
+    axios.get(`${apiUrl}/fetchActiveEmployees`)
       .then((res) => setEmployees(res.data.result || []))
       .catch(() => {});
   }, []);
@@ -48,7 +48,7 @@ function LeaveManagement() {
 
   // Approvals
   const [approvals, setApprovals] = useState([]);
-  const [approvalAdmin, setApprovalAdmin] = useState("1");
+  const [approvalAdmin, setApprovalAdmin] = useState("7");
   const [processingId, setProcessingId] = useState(null);
 
   // Adjustments
@@ -56,13 +56,13 @@ function LeaveManagement() {
   const [adjLeaveType, setAdjLeaveType] = useState("");
   const [adjType, setAdjType] = useState("CREDIT");
   const [adjDays, setAdjDays] = useState("");
-  const [adjBy, setAdjBy] = useState("1");
+  const [adjBy, setAdjBy] = useState("7");// Adjustment by Id-- harcoded stored in state please check this id stored in employee master table or not.
   const [adjReason, setAdjReason] = useState("");
   const [adjResult, setAdjResult] = useState(null);
 
   // Carry Forward
-  const [cfFrom, setCfFrom] = useState("2025-2026");
-  const [cfTo, setCfTo] = useState("2026-2027");
+  const [cfFrom, setCfFrom] = useState("2025-2026");//harcoded
+  const [cfTo, setCfTo] = useState("2026-2027");//harcoded
   const [cfResult, setCfResult] = useState(null);
 
   const showMessage = (text, isError = false) => {

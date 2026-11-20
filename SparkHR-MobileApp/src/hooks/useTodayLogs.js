@@ -12,7 +12,7 @@ export default function useTodayLogs() {
     try {
       const employeeId = await AsyncStorage.getItem("employee_id");
       if (!employeeId) return;
-      const res = await api.post("/attendance", { employee_id: employeeId });
+      const res = await api.post("/attendanceCheck", { employee_id: employeeId });
       setTodayRecords(res.data.record);
     } catch (err) {
       console.log("useTodayLogs error", err);

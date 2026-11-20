@@ -318,7 +318,7 @@ export default function AttendanceScreen() {
   // =========================================================================
   const checkAttendanceStatus = async (employeeId) => {
     try {
-      const response = await axios.post(`${API_BASE}/attendance`, {
+      const response = await axios.post(`${API_BASE}/attendanceCheck`, {
         employee_id: employeeId,
       });
 
@@ -553,7 +553,7 @@ export default function AttendanceScreen() {
 
       //Send Form Data to post api for db store
       const punchResponse = await axios.post(
-        `${API_BASE}/punch-in`,
+        `${API_BASE}/punchIn`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -620,7 +620,7 @@ export default function AttendanceScreen() {
         name: `selfie_${Date.now()}.jpg`,
       });
 
-      const response = await axios.post(`${API_BASE}/punch-out`, formData, {
+      const response = await axios.post(`${API_BASE}/punchOut`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 

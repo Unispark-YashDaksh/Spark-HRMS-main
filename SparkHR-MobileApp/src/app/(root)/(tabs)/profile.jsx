@@ -46,7 +46,7 @@ export default function Profile() {
 
   const handleFetchProfile = async (employeeId) => {
     try {
-      const response = await axios.get(`${VITE_API}/profile/${employeeId}`);
+      const response = await axios.get(`${VITE_API}/employeeProfile/${employeeId}`);
       setProfileData(response.data.data);
     } catch (err) {
       console.log("Profile Fetch Error:", err);

@@ -6,7 +6,7 @@ import {
 const fetchHolidays = async () => {
   try {
     const response = await axios.get(
-      `${VITE_API}/fetch-holidays`
+      `${VITE_API}/fetchHolidays`
     );
 
     const holidayArr = [];

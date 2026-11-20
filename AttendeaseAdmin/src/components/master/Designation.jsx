@@ -5,10 +5,10 @@ import LoadingSpinner from "../LoadingSpinner";
 const apiUrl= import.meta.env.VITE_API;
 
 // to be moved to .env file in for better security and configurability
-const Fetch_API_URL = `${apiUrl}/fetch-designation`;
+const Fetch_API_URL = `${apiUrl}/getDesignation`;
 const Post_API_URL = `${apiUrl}/addDesignation`;
 const PUT_API_URL = `${apiUrl}/updateDesignation`; // added this
-const Fetch_Dept_ID = `${apiUrl}/fetch-departments`;
+const Fetch_Dept_ID = `${apiUrl}/designationStatus`;
 
 const roleIcons = [
   "engineering",
