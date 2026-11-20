@@ -3,3 +3,4 @@ node_modules/
 dist/
 build/
 add_missing_aiven_tables.sql
+uploads/
