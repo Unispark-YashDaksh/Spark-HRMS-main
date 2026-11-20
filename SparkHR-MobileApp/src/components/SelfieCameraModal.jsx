@@ -20,8 +20,8 @@ export default function SelfieCameraModal({ visible, onCapture, onCancel }) {
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onCancel}>
       <View style={{ flex: 1 }}>
-        <CameraView ref={cameraRef} style={{ flex: 1 }} facing="front" />
-        <View style={[StyleSheet.absoluteFillObject, styles.overlay]}>
+        <CameraView ref={cameraRef} style={{ flex: 1, position: "absolute", top: 0, bottom: 0, left:0, right: 0 }} facing="front" />
+        <View style={[StyleSheet.absoluteFillObject, styles.overlay,]}>
           <TouchableOpacity style={styles.closeButton} onPress={onCancel}>
             <MaterialIcons name="close" size={28} color="#fff" />
           </TouchableOpacity>
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     marginRight: 20,
     padding: 8,
-    backgroundColor: "rgba(0,0,0,0.3)",
+    backgroundColor: "rgba(0,0,0,0.65)",
     borderRadius: 24,
   },
   captureArea: {
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   captureInner: {
     width: 60,
     height: 60,
-    borderRadius: 30,
-    backgroundColor: "#fff",
+    borderRadius: 40,
+    backgroundColor: " rgba(0,0,0,0.45)",
   },
 });
